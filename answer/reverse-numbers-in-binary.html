@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Reverse Numbers in Binary Code Kata Answer - Paul Gower</title>
+		<style>
+			body
+			{
+			    font-family: Arial;
+			    font-size: 10pt;
+			}
+			#outputSection, #binaryInputSection
+			{
+			    display: none;
+			}
+			#errorMessages
+			{
+				color: #900;
+			}
+		</style>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	</head>
+	<body>
+		<div id="errorMessages"></div>
+		<div>
+		    <label for="input">Input</label> <span id="binaryInputSection">as binary (<span id="inputAsBinary"></span>)</span><br />
+		    <input type="textbox" id="input" />
+		</div>
+		<br />
+		<div id="outputSection">
+		    <label for="output" id="outputLabel">Reversed</label> as binary (<span id="outputAsBinary"></span>)<br />
+		    <div id="output"></div>
+		</div>
+		<script type="text/javascript">
+			if (!String.prototype.reverse)
+			{
+				String.prototype.reverse = function () {
+				   var reversedString = "";
+				   for (var i = this.length - 1; i >= 0; --i) {
+				       reversedString += this[i];
+				   }
+				   return reversedString;
+				};
+			}
+
+			if (!String.prototype.isNumber)
+			{
+				String.prototype.isNumber = function () {
+					//code is from CMS user's answer from this stack overflow question: http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+  					return !isNaN(parseFloat(this)) && isFinite(this);
+				};
+			}
+
+			if (!String.prototype.isInteger)
+			{
+				String.prototype.isInteger = function () {
+					//part of this code is from kennebec user from this stack overflow question: http://stackoverflow.com/questions/3885817/how-to-check-if-a-number-is-float-or-integer
+					return (this.isNumber() && this % 1 === 0);
+				}
+			}
+
+			if (!String.prototype.toBinary)
+			{
+				String.prototype.toBinary = function () {
+					var asInteger;
+					var remainder;
+					var result;
+					var asBinary = "";
+					if (this.isNumber()) {
+						asInteger = parseInt(this, 10);
+						result = parseInt(asInteger / 2, 10);
+						remainder = asInteger % 2;
+						asBinary = remainder + asBinary;
+						while (result >= 1) {
+							console.log("values while begin: asBinary = " + asBinary + ", remainder = " + remainder + ", result = " + result);
+							remainder = result % 2;
+							asBinary = remainder + asBinary;
+							result = parseInt(result / 2, 10);
+							console.log("values while end: asBinary = " + asBinary + ", remainder = " + remainder + ", result = " + result);
+						}
+					}
+					return asBinary;
+				};
+			}
+
+			if (!String.prototype.toBase10)
+			{
+				String.prototype.toBase10 = function () {
+				   var  base10Value = 0;
+				   var power = 0;
+				   for (var i = this.length - 1; i >= 0; --i) {
+				       base10Value += this[i] * Math.pow(2, power);
+					   console.log("this[i] * Math.pow(2, power):  this[i] = " + this[i] + ", i = " + i + ", Math.pow(2, power) = " + Math.pow(2, power) + ", power = " + power);
+				       ++power;
+				   }
+				   return base10Value;
+
+				};
+			}
+
+			function reverseNumberAsBinary() {
+			    var testString = $("#input").val();
+			    var testStringAsBinary;
+
+			    var reversedTestString;
+			    var reversedTestStringAsBinary;
+			    if (testString.length > 0 && testString.isInteger() && parseInt(testString) > 0)
+			    {
+			    	testStringAsBinary = testString.toBinary();
+					console.log('input (as binary): ' + testStringAsBinary);
+
+				    reversedTestStringAsBinary = testStringAsBinary.reverse();
+					console.log('reversed: ' + reversedTestString);
+
+				    reversedTestString = reversedTestStringAsBinary.toBase10();
+					console.log('reversed (as binary): ' + reversedTestStringAsBinary);
+
+					$("#errorMessages").hide();
+
+				    $("#inputAsBinary").html(testStringAsBinary);
+				    $("#binaryInputSection").show();
+
+				    $("#output").html(reversedTestString);
+				    $("#outputAsBinary").html(reversedTestStringAsBinary);
+				    $("#outputSection").show();
+			    }
+			    else
+			    {
+			    	$("#errorMessages").html("Input must be an positive integer.");
+			    	$("#errorMessages").show();
+			    	$("#binaryInputSection").hide();
+			    	$("#outputSection").hide();
+			    }
+			}
+			$(document).ready(function () {
+				$("#input").on("keyup", function () {
+					reverseNumberAsBinary();
+				});
+
+				//run first time to initialize
+				reverseNumberAsBinary();
+			});
+		</script>
+	</body>
+</html>
